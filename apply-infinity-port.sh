@@ -39,9 +39,10 @@ log "Overlaying the built LineageOS tree changes (git metadata preserved)"
 [ -d "$SRC/vendor/samsung/sm7225-common" ] || die "vendor/samsung/sm7225-common not synced"
 rsync -a --exclude=.git "$LINEAGE_TREE/device/samsung/a42xq/" "$SRC/device/samsung/a42xq/"
 rsync -a --exclude=.git "$LINEAGE_TREE/device/samsung/sm7225-common/" "$SRC/device/samsung/sm7225-common/"
-rsync -a --exclude=.git "$LINEAGE_TREE/vendor/samsung/sm7225-common/" "$SRC/vendor/samsung/sm7225-common/"
-ln -sfn sm7225-common/a42xq "$SRC/vendor/samsung/a42xq"
-echo "vendor/samsung/a42xq -> sm7225-common/a42xq"
+rsync -a --exclude=.git --exclude=a42xq "$LINEAGE_TREE/vendor/samsung/sm7225-common/" "$SRC/vendor/samsung/sm7225-common/"
+# a42xq blobs are their own PRIVATE project, checked out at a real path.
+[ -d "$SRC/vendor/samsung/a42xq/proprietary" ] || die "vendor/samsung/a42xq not synced (private repo android_vendor_samsung_a42xq; add the manifest entry and repo sync)"
+echo "vendor/samsung/a42xq comes from android_vendor_samsung_a42xq"
 
 log "Installing Infinity product files"
 cp -f "$LOCAL/infinity-port/infinity_a42xq.mk" "$SRC/device/samsung/a42xq/infinity_a42xq.mk"

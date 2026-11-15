@@ -51,8 +51,8 @@ TARGET_BOOTANIMATION_TEXTURE_CACHE := true
 TARGET_SCREEN_HEIGHT := 1600
 TARGET_SCREEN_WIDTH := 720
 
-# Combined vendor repo: the a42xq blob namespace is nested inside sm7225-common
-PRODUCT_SOONG_NAMESPACES += vendor/samsung/sm7225-common/a42xq
+# a42xq blobs live in the private android_vendor_samsung_a42xq project
+PRODUCT_SOONG_NAMESPACES += vendor/samsung/a42xq
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_NAME := infinity_a42xq

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Samsung Galaxy A42 5G (a42xq) - Project Infinity-X 17
+  Copy this file to .repo/local_manifests/ in the Infinity-X tree,
+  then run: repo sync -c -j8
+
+  android_vendor_samsung_a42xq is PRIVATE: syncing it needs credentials
+  (the Windows GitHub CLI credential helper works from WSL).
+-->
+<manifest>
+  <remote name="kyler"
+          fetch="https://github.com/kylerichards952806"
+          revision="lineage-24.0" />
+
+  <project name="android_device_samsung_a42xq"
+           path="device/samsung/a42xq"
+           remote="kyler" />
+
+  <project name="android_device_samsung_sm7225-common"
+           path="device/samsung/sm7225-common"
+           remote="kyler" />
+
+  <project name="android_kernel_samsung_sm7225"
+           path="kernel/samsung/sm7225"
+           remote="kyler" />
+
+  <project name="android_vendor_samsung_sm7225-common"
+           path="vendor/samsung/sm7225-common"
+           remote="kyler" />
+
+  <!-- a42xq blobs live in their own private repo and are checked out at a
+       real path; the sm7225-common tree no longer carries an a42xq/ copy. -->
+  <project name="android_vendor_samsung_a42xq"
+           path="vendor/samsung/a42xq"
+           remote="kyler"
+           revision="main" />
+</manifest>
