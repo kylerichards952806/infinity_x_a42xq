@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 #
-# Apply the a42xq port on top of a synced Project Infinity-X tree.
-# Run inside WSL after `repo sync` has fetched the device/kernel/vendor projects:
+# Prepare a synced Project Infinity-X tree for the Galaxy A42 5G build.
+#
+# The device, vendor and kernel projects now come from `repo sync` at the
+# right revisions (device a42xq = infinity-x, vendor sm7225-common =
+# infinity-24.0, blobs = android_vendor_samsung_a42xq), so this script only
+# installs the local manifest and the private release keys, then verifies the
+# tree instead of overwriting it.
+#
 #   bash /mnt/c/a42/apply-infinity-port.sh
 #
 set -euo pipefail
@@ -19,6 +25,7 @@ log() { printf '\n=== %s ===\n' "$*"; }
 log "Installing local manifest"
 mkdir -p "$SRC/.repo/local_manifests"
 cp -f "$LOCAL/local_manifests/a42xq-infinity.xml" "$SRC/.repo/local_manifests/a42xq.xml"
+echo "wrote .repo/local_manifests/a42xq.xml (run: repo sync -c -j4)"
 
 log "Copying private release keys"
 KEY_DST="$SRC/vendor/infinity-priv/keys"
@@ -32,27 +39,19 @@ else
     echo "keys already present"
 fi
 
-log "Overlaying the built LineageOS tree changes (git metadata preserved)"
-[ -d "$LINEAGE_TREE/device/samsung/a42xq" ] || die "no Lineage tree at $LINEAGE_TREE"
-[ -d "$SRC/device/samsung/a42xq" ] || die "device/samsung/a42xq not synced"
-[ -d "$SRC/device/samsung/sm7225-common" ] || die "device/samsung/sm7225-common not synced"
-[ -d "$SRC/vendor/samsung/sm7225-common" ] || die "vendor/samsung/sm7225-common not synced"
-rsync -a --exclude=.git "$LINEAGE_TREE/device/samsung/a42xq/" "$SRC/device/samsung/a42xq/"
-rsync -a --exclude=.git "$LINEAGE_TREE/device/samsung/sm7225-common/" "$SRC/device/samsung/sm7225-common/"
-rsync -a --exclude=.git --exclude=a42xq "$LINEAGE_TREE/vendor/samsung/sm7225-common/" "$SRC/vendor/samsung/sm7225-common/"
-# a42xq blobs are their own PRIVATE project, checked out at a real path.
-[ -d "$SRC/vendor/samsung/a42xq/proprietary" ] || die "vendor/samsung/a42xq not synced (private repo android_vendor_samsung_a42xq; add the manifest entry and repo sync)"
-echo "vendor/samsung/a42xq comes from android_vendor_samsung_a42xq"
+log "Checking synced projects"
+for p in device/samsung/a42xq device/samsung/sm7225-common \
+         vendor/samsung/sm7225-common vendor/samsung/a42xq kernel/samsung/sm7225; do
+    [ -d "$SRC/$p" ] || die "$p is missing - add the manifest entry and run repo sync"
+    printf '%-32s %s\n' "$p" "$(git -C "$SRC/$p" log --oneline -1 2>/dev/null || echo 'not a git checkout')"
+done
 
-log "Installing Infinity product files"
-cp -f "$LOCAL/infinity-port/infinity_a42xq.mk" "$SRC/device/samsung/a42xq/infinity_a42xq.mk"
-cp -f "$LOCAL/infinity-port/AndroidProducts.mk" "$SRC/device/samsung/a42xq/AndroidProducts.mk"
+log "Verifying the blob namespace"
+grep -q 'PRODUCT_SOONG_NAMESPACES += vendor/samsung/a42xq' \
+    "$SRC/device/samsung/a42xq/infinity_a42xq.mk" \
+    || die "infinity_a42xq.mk does not point at vendor/samsung/a42xq"
+grep -q 'infinity_a42xq.mk' "$SRC/device/samsung/a42xq/AndroidProducts.mk" \
+    || die "AndroidProducts.mk does not list the Infinity product"
+echo "ok"
 
-log "Checking kernel"
-if [ -d "$SRC/kernel/samsung/sm7225/.git" ]; then
-    git -C "$SRC/kernel/samsung/sm7225" log -1 --oneline
-else
-    echo "WARNING: kernel/samsung/sm7225 is not a git checkout"
-fi
-
-log "Done"
+log "Done - start the build with build-infinity-a42xq.sh"

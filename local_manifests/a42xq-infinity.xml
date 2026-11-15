@@ -12,9 +12,11 @@
           fetch="https://github.com/kylerichards952806"
           revision="lineage-24.0" />
 
+  <!-- Infinity product files live on the infinity-x branch -->
   <project name="android_device_samsung_a42xq"
            path="device/samsung/a42xq"
-           remote="kyler" />
+           remote="kyler"
+           revision="infinity-x" />
 
   <project name="android_device_samsung_sm7225-common"
            path="device/samsung/sm7225-common"
@@ -24,9 +26,11 @@
            path="kernel/samsung/sm7225"
            remote="kyler" />
 
+  <!-- infinity-24.0 is lineage-24.0 with the a42xq blobs split out -->
   <project name="android_vendor_samsung_sm7225-common"
            path="vendor/samsung/sm7225-common"
-           remote="kyler" />
+           remote="kyler"
+           revision="infinity-24.0" />
 
   <!-- a42xq blobs live in their own private repo and are checked out at a
        real path; the sm7225-common tree no longer carries an a42xq/ copy. -->
