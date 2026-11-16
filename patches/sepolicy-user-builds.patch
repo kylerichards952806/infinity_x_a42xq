@@ -1,52 +1,42 @@
-diff --git a/private/crash_dump.te b/private/crash_dump.te
-index 4bd1d3821..50b92c31f 100644
---- a/private/crash_dump.te
-+++ b/private/crash_dump.te
-@@ -18,8 +18,10 @@ allow crash_dump {
-   -vold
- }:process { ptrace signal sigchld sigstop sigkill };
- 
-+allow crash_dump vold:process { ptrace signal sigchld sigstop sigkill };
-+
- userdebug_or_eng(`
--  allow crash_dump { apexd llkd logd vold }:process { ptrace signal sigchld sigstop sigkill };
-+  allow crash_dump { apexd llkd logd }:process { ptrace signal sigchld sigstop sigkill };
- ')
- 
- # Read ART APEX data directory
-@@ -138,8 +140,6 @@ neverallow crash_dump {
-   userdebug_or_eng(`-logd')
-   ueventd
-   vendor_init
--  vold
--  userdebug_or_eng(`-vold')
- }:process { ptrace signal sigstop sigkill };
- 
- neverallow crash_dump self:process ptrace;
+From d8b331f4a6cc7550afdcd34d34d9a4a3e066ef6d Mon Sep 17 00:00:00 2001
+From: Kyle Richards <kylerichards952806@gmail.com>
+Date: Mon, 16 Nov 2026 14:22:26 +0000
+Subject: [PATCH] a42xq: let SystemUI actually read ro.usb.uvc.enabled
+
+The previous change only silenced the audit trail: the appdomain neverallow still
+denied platform_app, so SystemUI got no value. Carve platform_app out of that
+neverallow (platform-key signed, same trust class as the already-exempt
+system_app) and grant the read with get_prop instead of dontaudit.
+---
+ private/platform_app.te | 5 ++++-
+ private/property.te     | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
 diff --git a/private/platform_app.te b/private/platform_app.te
-index 0b36a6621..a7c46a80b 100644
+index a7c46a80b..4c1311ec8 100644
 --- a/private/platform_app.te
 +++ b/private/platform_app.te
-@@ -12,3 +12,7 @@ net_domain(platform_app)
- bluetooth_domain(platform_app)
+@@ -15,4 +15,7 @@ platform_app_domain(platform_app)
  
- platform_app_domain(platform_app)
-+
-+# SystemUI polls ro.usb.uvc.enabled; the appdomain neverallow keeps the read
-+# denied, so silence the recurring audit denial.
-+dontaudit platform_app usb_uvc_enabled_prop:file read;
-diff --git a/private/system_server.te b/private/system_server.te
-index 355e5b9a2..9cae08931 100644
---- a/private/system_server.te
-+++ b/private/system_server.te
-@@ -1791,9 +1791,7 @@ allow system_server binderfs_logs:dir r_dir_perms;
- allow system_server binderfs_logs_stats:file r_file_perms;
+ # SystemUI polls ro.usb.uvc.enabled; the appdomain neverallow keeps the read
+ # denied, so silence the recurring audit denial.
+-dontaudit platform_app usb_uvc_enabled_prop:file read;
++# SystemUI reads ro.usb.uvc.enabled to drive the webcam UI. platform_app is
++# platform-key signed, the same trust level the neverallow already grants to
++# system_app, so carve it out there and allow the read here.
++get_prop(platform_app, usb_uvc_enabled_prop)
+diff --git a/private/property.te b/private/property.te
+index 762f92d03..13c2ec1ac 100644
+--- a/private/property.te
++++ b/private/property.te
+@@ -890,6 +890,7 @@ neverallow {
+   appdomain
+   -system_app
+   -device_as_webcam
++  -platform_app
+ } usb_uvc_enabled_prop:file no_rw_file_perms;
  
- # For ANRs
--userdebug_or_eng(`
--    allow system_server binderfs_logs_transactions:file r_file_perms;
--')
-+allow system_server binderfs_logs_transactions:file r_file_perms;
- allow system_server binderfs_logs_transaction_history:file r_file_perms;
- 
- # Allow GameManagerService to read and write persist.graphics.game_default_frame_rate.enabled
+ neverallow {
+-- 
+2.43.0
+
