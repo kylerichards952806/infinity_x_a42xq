@@ -20,6 +20,10 @@ POST="${RELEASE_POST:-/mnt/c/a42/release-post-infinityx-a42xq-17.md}"
 ARTIFACTS="${ARTIFACTS:-/mnt/c/a42/artifacts}"
 BUILD_TYPE="${BUILD_TYPE:-user}"
 JOBS="${JOBS:-$(nproc)}"
+# OTA packaging zips the target-files ROOT/, which contains absolute Android
+# symlinks (ROOT/d -> /sys/kernel/debug). Without -y, zip follows them into the
+# host sysfs and hangs; -y stores them as symlinks.
+export ZIPOPT="${ZIPOPT:--y}"
 DEVICE=a42xq
 KEYS_SRC="${KEYS_SRC:-/root/android/vendor/lineage-priv/keys}"
 
