@@ -19,6 +19,8 @@ Both variants are supported from the same tree:
 | `infinity-port/` | `infinity_a42xq.mk` and `AndroidProducts.mk` for the device tree |
 | `release-post-infinityx-a42xq-17.md` | XDA release post template |
 | `patches/sepolicy-user-builds.patch` | `system/sepolicy` fix so `user` builds can dump vold stacks and read binderfs ANR transactions |
+| `patches/healthd-charging-current.patch` | `healthd` fix so charging current is in microamps and the AOD wattage is real |
+| `patches/releasetools-nonab-ota-zip.patch` | `releasetools` fix so the A-only OTA zip stops following `ROOT/d` into the host sysfs |
 
 ## Device
 

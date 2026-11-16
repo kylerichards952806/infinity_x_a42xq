@@ -1,7 +1,80 @@
+From aa205b97abd4dacc063c9202f258408d286dbe45 Mon Sep 17 00:00:00 2001
+From: Kyle Richards <kylerichards952806@gmail.com>
+Date: Mon, 16 Nov 2026 13:59:58 +0000
+Subject: [PATCH 1/3] a42xq: allow vold dumps and binderfs ANR reads on user
+ builds
+
+crash_dump could not ptrace vold and system_server could not read
+binderfs_logs_transactions because both rules were userdebug_or_eng only; the
+crash_dump neverallow also listed vold for user builds. Also silence the
+ro.usb.uvc.enabled read from SystemUI, which the appdomain neverallow keeps
+denied by design.
+---
+ private/crash_dump.te    | 6 +++---
+ private/platform_app.te  | 4 ++++
+ private/system_server.te | 4 +---
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/private/crash_dump.te b/private/crash_dump.te
+index 4bd1d3821..50b92c31f 100644
+--- a/private/crash_dump.te
++++ b/private/crash_dump.te
+@@ -18,8 +18,10 @@ allow crash_dump {
+   -vold
+ }:process { ptrace signal sigchld sigstop sigkill };
+ 
++allow crash_dump vold:process { ptrace signal sigchld sigstop sigkill };
++
+ userdebug_or_eng(`
+-  allow crash_dump { apexd llkd logd vold }:process { ptrace signal sigchld sigstop sigkill };
++  allow crash_dump { apexd llkd logd }:process { ptrace signal sigchld sigstop sigkill };
+ ')
+ 
+ # Read ART APEX data directory
+@@ -138,8 +140,6 @@ neverallow crash_dump {
+   userdebug_or_eng(`-logd')
+   ueventd
+   vendor_init
+-  vold
+-  userdebug_or_eng(`-vold')
+ }:process { ptrace signal sigstop sigkill };
+ 
+ neverallow crash_dump self:process ptrace;
+diff --git a/private/platform_app.te b/private/platform_app.te
+index 0b36a6621..a7c46a80b 100644
+--- a/private/platform_app.te
++++ b/private/platform_app.te
+@@ -12,3 +12,7 @@ net_domain(platform_app)
+ bluetooth_domain(platform_app)
+ 
+ platform_app_domain(platform_app)
++
++# SystemUI polls ro.usb.uvc.enabled; the appdomain neverallow keeps the read
++# denied, so silence the recurring audit denial.
++dontaudit platform_app usb_uvc_enabled_prop:file read;
+diff --git a/private/system_server.te b/private/system_server.te
+index 355e5b9a2..9cae08931 100644
+--- a/private/system_server.te
++++ b/private/system_server.te
+@@ -1791,9 +1791,7 @@ allow system_server binderfs_logs:dir r_dir_perms;
+ allow system_server binderfs_logs_stats:file r_file_perms;
+ 
+ # For ANRs
+-userdebug_or_eng(`
+-    allow system_server binderfs_logs_transactions:file r_file_perms;
+-')
++allow system_server binderfs_logs_transactions:file r_file_perms;
+ allow system_server binderfs_logs_transaction_history:file r_file_perms;
+ 
+ # Allow GameManagerService to read and write persist.graphics.game_default_frame_rate.enabled
+-- 
+2.43.0
+
+
 From d8b331f4a6cc7550afdcd34d34d9a4a3e066ef6d Mon Sep 17 00:00:00 2001
 From: Kyle Richards <kylerichards952806@gmail.com>
 Date: Mon, 16 Nov 2026 14:22:26 +0000
-Subject: [PATCH] a42xq: let SystemUI actually read ro.usb.uvc.enabled
+Subject: [PATCH 2/3] a42xq: let SystemUI actually read ro.usb.uvc.enabled
 
 The previous change only silenced the audit trail: the appdomain neverallow still
 denied platform_app, so SystemUI got no value. Carve platform_app out of that
@@ -37,6 +110,39 @@ index 762f92d03..13c2ec1ac 100644
  } usb_uvc_enabled_prop:file no_rw_file_perms;
  
  neverallow {
+-- 
+2.43.0
+
+
+From f260c3e2b2df0284c30b152557397ac703e08ad0 Mon Sep 17 00:00:00 2001
+From: Kyle Richards <kylerichards952806@gmail.com>
+Date: Mon, 16 Nov 2026 16:51:41 +0000
+Subject: [PATCH 3/3] sepolicy: keep binderfs transaction logs userdebug-only
+
+The platform neverallow excludes system_server from binderfs_logs_transactions only on userdebug/eng builds. Making the allow unconditional failed the neverallow check, so restore the upstream conditional and dontaudit the expected denial on user builds.
+---
+ private/system_server.te | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/private/system_server.te b/private/system_server.te
+index 9cae08931..4822b0941 100644
+--- a/private/system_server.te
++++ b/private/system_server.te
+@@ -1791,8 +1791,13 @@ allow system_server binderfs_logs:dir r_dir_perms;
+ allow system_server binderfs_logs_stats:file r_file_perms;
+ 
+ # For ANRs
+-allow system_server binderfs_logs_transactions:file r_file_perms;
++userdebug_or_eng(`
++    allow system_server binderfs_logs_transactions:file r_file_perms;
++')
+ allow system_server binderfs_logs_transaction_history:file r_file_perms;
++# The platform neverallow keeps transaction logs out of reach on user builds.
++# Silence the expected denial instead of spamming the audit log.
++dontaudit system_server binderfs_logs_transactions:file r_file_perms;
+ 
+ # Allow GameManagerService to read and write persist.graphics.game_default_frame_rate.enabled
+ set_prop(system_server, game_manager_config_prop)
 -- 
 2.43.0
 

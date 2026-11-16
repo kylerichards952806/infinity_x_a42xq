@@ -1,0 +1,46 @@
+From 86562bad692f829d4a5196492a84c822e4b2284b Mon Sep 17 00:00:00 2001
+From: Kyle Richards <kylerichards952806@gmail.com>
+Date: Mon, 16 Nov 2026 14:51:56 +0000
+Subject: [PATCH] healthd: report charging current in microamps from
+ bms/current_now
+
+Samsung kernels expose current_now in mA, so BatteryMonitor stored 746 into a microamp field. SettingsLib then computed 0.746 mA x 4.28 V ~= 3 mW and the AOD charging readout showed 0.0 W. Normalise sub-100 mA readings to microamps and fall back to bms/current_now when battery/current_now is missing.
+---
+ healthd/BatteryMonitor.cpp | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/healthd/BatteryMonitor.cpp b/healthd/BatteryMonitor.cpp
+index 0daf4b570..a7774e136 100644
+--- a/healthd/BatteryMonitor.cpp
++++ b/healthd/BatteryMonitor.cpp
+@@ -50,6 +50,8 @@
+ #define POWER_SUPPLY_SYSFS_PATH "/sys/class/" POWER_SUPPLY_SUBSYSTEM
+ #define SYSFS_BATTERY_CURRENT "/sys/class/power_supply/battery/current_now"
+ #define SYSFS_BATTERY_VOLTAGE "/sys/class/power_supply/battery/voltage_now"
++// Samsung kernels expose the pack current under bms/, in mA.
++#define SYSFS_BMS_CURRENT "/sys/class/power_supply/bms/current_now"
+ #define DEV_GLOB "/sys/devices/platform/*gcdd/system_dev_stat"
+ #define CDD_SYSTEM_DEVICE_TEMP 8
+ #define FAKE_BATTERY_CAPACITY 42
+@@ -620,6 +622,18 @@ void BatteryMonitor::updateValues(void) {
+                 }
+             }
+ 
++            // Samsung exposes the pack current from the BMS, which stays readable
++            // (and non-zero) when battery/current_now is absent.
++            if (ChargingCurrent <= 0 && access(SYSFS_BMS_CURRENT, R_OK) == 0) {
++                ChargingCurrent = abs(tryGetIntField(String8(SYSFS_BMS_CURRENT)).value_or(0));
++            }
++
++            // Several Samsung kernels report current_now in mA. Microamp values for
++            // a charging phone are always >= 100 mA, so a smaller reading is mA.
++            if (ChargingCurrent > 0 && ChargingCurrent < 10000) {
++                ChargingCurrent *= 1000;
++            }
++
+             if (access(SYSFS_BATTERY_VOLTAGE, R_OK) == 0) {
+                 ChargingVoltage = abs(tryGetIntField(String8(SYSFS_BATTERY_VOLTAGE)).value_or(0));
+             } else {
+-- 
+2.43.0
+
