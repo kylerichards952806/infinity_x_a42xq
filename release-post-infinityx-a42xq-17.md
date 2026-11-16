@@ -125,12 +125,13 @@ Everything needed as a daily driver:
 - Added `Launcher3QuickStep`, because the product shipped no HOME activity at all
 - Added Dolby Atmos (`org.lineageos.dap`, Settings → Sound) and AudioFX
 - SELinux: `crash_dump` can ptrace `vold` and `system_server` can read `binderfs_logs_transactions` on `user` builds; the benign `ro.usb.uvc.enabled` read from SystemUI is silenced
-- OTA packaging uses `ZIPOPT=-y` so the build no longer follows `ROOT/d` into the host sysfs
+- OTA packaging no longer hangs: `releasetools/non_ab_ota.py` archived the target files without `-y`, so `zip` followed `ROOT/d` into the host sysfs and blocked forever; the flag is now passed there too, and `ZIPOPT=-y` stays exported for the other packaging paths
+
+- Fixed the always-on display / lockscreen charging readout showing 0.0 W: the Samsung kernel reports `battery/current_now` in mA, and `healthd` stored it straight into a microamp field, so SettingsLib computed ~3 mW. The HAL now normalises to microamps and falls back to `bms/current_now`
 
 **Known issues**
 
 - Dolby Atmos: the app and its Settings entry install correctly, but the vendor DAP effect (`46d279d9-9be7-453d-9d7c-ef937f675587`) is not in the blob set, so the switch has no audible effect yet. Fixing it needs the effect library from stock A426B firmware plus a matching `audio_effects.xml` entry
-- Always-on display charging readout shows 0.0 W: the framework derives it from instantaneous charge current, which the health HAL reports as 0 on this kernel
 - Vibration intensity sliders could not be verified until the boot fix is flashed; `VibratorManagerService` already reports full intensity settings
 
 **Device tree (carried over from LineageOS 24.0)**
@@ -181,6 +182,7 @@ Everything needed as a daily driver:
 | --- | --- | --- | --- |
 | Initial | 12 Nov 2026 | Infinity-X 4.2 | above |
 | 4.2 | 16 Nov 2026 | Infinity-X 4.2 | boot/livedisplay fix, Launcher3QuickStep, Dolby Atmos, AudioFX, user-build SELinux fixes, ZIPOPT OTA fix |
+| GAPPS 4.2 | 16 Nov 2026 | Infinity-X 4.2 | healthd charging-wattage fix, `releasetools` `-y` OTA fix, GMS LFS blobs pulled; GAPPS variant only |
 
 ---
 
@@ -219,8 +221,8 @@ This is a `user` build signed with release keys and keeps the stock A426B finger
 Both variants are built from the same device trees; only the `WITH_GAPPS` flag differs.
 
 <!-- DOWNLOADS_START -->
-- **GAPPS** (`WITH_GAPPS := true`): `<ZIP_NAME>` — `<FILE_SIZE>` — MD5: `<MD5>`
-- **VANILLA** (`WITH_GAPPS := false`): `<ZIP_NAME>` — `<FILE_SIZE>` — MD5: `<MD5>`
+- **GAPPS** (`WITH_GAPPS := true`): `Project_Infinity-X-4.2-a42xq-16.11.2026-GAPPS-UNOFFICIAL.zip` — 2,519,545,845 bytes (2.35 GiB) — MD5: `61401778d4e84b76e98778c6fbcfd695`
+- **VANILLA** (`WITH_GAPPS := false`): not rebuilt yet. The earlier VANILLA zip predates the boot and wattage fixes, so don't flash it; a fresh VANILLA build follows.
 <!-- DOWNLOADS_END -->
 
 The zip contains `recovery.img`, the Lineage recovery for this device, for anyone who would rather use it than TWRP.
