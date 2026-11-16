@@ -7,6 +7,34 @@ Builds are only started when explicitly requested.
 
 ## Pending
 
+- `device/samsung/a42xq` (new commit): Google ExtServices priv-app fallback
+  plus the two Google APEX `avbpubkey` files. Fixes the endless boot
+  animation: `PackageManagerService` aborted `system_server` with
+  "Required services extension package is missing" because apexd never
+  activated `com.google.android.extservices.apex`. Must be in the next
+  artifact.
+- GAPPS payload is incomplete: `vendor/pixel/gms` ships only the GmsCore
+  **Dynamite modules** (no base `PrebuiltGmsCore` APK), so
+  `com.google.android.gms` is never installed. Play Store crashes on the
+  missing `com.google.android.gsf.gservices` provider and GSF cannot
+  start. GAPPS is not usable until a full GMS base APK is added.
+- Metadata encryption: TWRP "wipe metadata" destroyed the factory-wrapped
+  key on this device. vold only generates that key on the format path, so
+  the device currently runs with `metadata_encryption` removed from
+  `/vendor/etc/fstab.default` (device-side only, not in the tree). Never
+  wipe `/metadata`; if it is wiped, that fstab edit is required to boot.
+- Device-side debug leftovers from bring-up (not in the tree, a clean
+  build reverts them): `ro.adb.secure=0` and `ro.debuggable=1` in
+  `/system/build.prop`, an `init.rc` trigger that forces
+  `sys.usb.config=adb`, and `/data/misc/adb/adb_keys`.
+- Do not create files as root inside `/data/system` from recovery: a
+  root-owned `locksettings.db` left there made `TrustManagerService`
+  abort `system_server` with `SQLiteCantOpenDatabaseException ...
+  locksettings.db`.
+- SetupWizard hijacks HOME after an offline setup; mark
+  `device_provisioned`/`user_setup_complete` and disable
+  `com.google.android.setupwizard` to get Launcher3 back.
+
 - `device/samsung/a42xq` `cc23dce`: pinned the super and logical partition
   sizes to the A42 5G layout so the GAPPS images cannot overflow the real
   super again.
