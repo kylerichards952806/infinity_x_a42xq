@@ -7,6 +7,12 @@ Builds are only started when explicitly requested.
 
 ## Pending
 
+- `device/samsung/a42xq`: Google Play services priv-app fallback
+  (`prebuilts/gms/PrebuiltGmsCore.apk`, 26.11.36, Git LFS) plus its
+  privapp allowlist and preinstalled-packages sysconfig. Fixes Play Store
+  dying with `Failed to find provider com.google.android.gsf.gservices`
+  because apexd never mounted the GMS APEX. Remove the APK copy if apexd
+  ever starts mounting `com.google.android.gmssystem.prodvic.apex`.
 - `device/samsung/a42xq` (new commit): Google ExtServices priv-app fallback
   plus the two Google APEX `avbpubkey` files. Fixes the endless boot
   animation: `PackageManagerService` aborted `system_server` with
