@@ -1,0 +1,52 @@
+diff --git a/private/crash_dump.te b/private/crash_dump.te
+index 4bd1d3821..50b92c31f 100644
+--- a/private/crash_dump.te
++++ b/private/crash_dump.te
+@@ -18,8 +18,10 @@ allow crash_dump {
+   -vold
+ }:process { ptrace signal sigchld sigstop sigkill };
+ 
++allow crash_dump vold:process { ptrace signal sigchld sigstop sigkill };
++
+ userdebug_or_eng(`
+-  allow crash_dump { apexd llkd logd vold }:process { ptrace signal sigchld sigstop sigkill };
++  allow crash_dump { apexd llkd logd }:process { ptrace signal sigchld sigstop sigkill };
+ ')
+ 
+ # Read ART APEX data directory
+@@ -138,8 +140,6 @@ neverallow crash_dump {
+   userdebug_or_eng(`-logd')
+   ueventd
+   vendor_init
+-  vold
+-  userdebug_or_eng(`-vold')
+ }:process { ptrace signal sigstop sigkill };
+ 
+ neverallow crash_dump self:process ptrace;
+diff --git a/private/platform_app.te b/private/platform_app.te
+index 0b36a6621..a7c46a80b 100644
+--- a/private/platform_app.te
++++ b/private/platform_app.te
+@@ -12,3 +12,7 @@ net_domain(platform_app)
+ bluetooth_domain(platform_app)
+ 
+ platform_app_domain(platform_app)
++
++# SystemUI polls ro.usb.uvc.enabled; the appdomain neverallow keeps the read
++# denied, so silence the recurring audit denial.
++dontaudit platform_app usb_uvc_enabled_prop:file read;
+diff --git a/private/system_server.te b/private/system_server.te
+index 355e5b9a2..9cae08931 100644
+--- a/private/system_server.te
++++ b/private/system_server.te
+@@ -1791,9 +1791,7 @@ allow system_server binderfs_logs:dir r_dir_perms;
+ allow system_server binderfs_logs_stats:file r_file_perms;
+ 
+ # For ANRs
+-userdebug_or_eng(`
+-    allow system_server binderfs_logs_transactions:file r_file_perms;
+-')
++allow system_server binderfs_logs_transactions:file r_file_perms;
+ allow system_server binderfs_logs_transaction_history:file r_file_perms;
+ 
+ # Allow GameManagerService to read and write persist.graphics.game_default_frame_rate.enabled

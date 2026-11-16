@@ -18,6 +18,7 @@ Both variants are supported from the same tree:
 | `build-infinity-a42xq.sh` | Builds GAPPS then VANILLA, copies the zips out, records size and MD5, and fills in the release post |
 | `infinity-port/` | `infinity_a42xq.mk` and `AndroidProducts.mk` for the device tree |
 | `release-post-infinityx-a42xq-17.md` | XDA release post template |
+| `patches/sepolicy-user-builds.patch` | `system/sepolicy` fix so `user` builds can dump vold stacks and read binderfs ANR transactions |
 
 ## Device
 

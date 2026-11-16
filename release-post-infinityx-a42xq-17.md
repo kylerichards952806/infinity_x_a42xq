@@ -119,6 +119,20 @@ Everything needed as a daily driver:
 - Expanded volume panel now opens the media output switcher instead of the extended stock volume panel
 - Variable fonts applied to the lyrics card and lockscreen lyrics
 
+**Infinity-X 4.2 — 16 November 2026 (this build)**
+
+- Fixed the "Phone is starting" hang: the device manifest declared a `vendor.lineage.livedisplay` AIDL HAL that no service registers, so `ServiceManager.waitForDeclaredService()` blocked the `android.display` thread inside `finishBooting()`. User 0 never unlocked, no launcher ever appeared, and the Watchdog restarted `system_server` every ~66 seconds
+- Added `Launcher3QuickStep`, because the product shipped no HOME activity at all
+- Added Dolby Atmos (`org.lineageos.dap`, Settings → Sound) and AudioFX
+- SELinux: `crash_dump` can ptrace `vold` and `system_server` can read `binderfs_logs_transactions` on `user` builds; the benign `ro.usb.uvc.enabled` read from SystemUI is silenced
+- OTA packaging uses `ZIPOPT=-y` so the build no longer follows `ROOT/d` into the host sysfs
+
+**Known issues**
+
+- Dolby Atmos: the app and its Settings entry install correctly, but the vendor DAP effect (`46d279d9-9be7-453d-9d7c-ef937f675587`) is not in the blob set, so the switch has no audible effect yet. Fixing it needs the effect library from stock A426B firmware plus a matching `audio_effects.xml` entry
+- Always-on display charging readout shows 0.0 W: the framework derives it from instantaneous charge current, which the health HAL reports as 0 on this kernel
+- Vibration intensity sliders could not be verified until the boot fix is flashed; `VibratorManagerService` already reports full intensity settings
+
 **Device tree (carried over from LineageOS 24.0)**
 
 - SELinux fully enforcing from boot, with the bring-up denials cleaned up
@@ -165,7 +179,8 @@ Everything needed as a daily driver:
 
 | Build | Date | ROM | Device / kernel changes |
 | --- | --- | --- | --- |
-| Initial | <BUILD_DATE> | Infinity-X 4.2 | above |
+| Initial | 12 Nov 2026 | Infinity-X 4.2 | above |
+| 4.2 | 16 Nov 2026 | Infinity-X 4.2 | boot/livedisplay fix, Launcher3QuickStep, Dolby Atmos, AudioFX, user-build SELinux fixes, ZIPOPT OTA fix |
 
 ---
 
