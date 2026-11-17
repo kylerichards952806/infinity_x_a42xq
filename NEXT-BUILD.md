@@ -8,13 +8,13 @@ Builds are only started when explicitly requested.
 ## Pending
 
 - KernelSU-Next pairing: the kernel driver reports **uapi 6**
-  (), so it must always ship with a
-  **uapi-6 manager** — currently the dev CI build 
-  (, mirrored in
-   and linked from the release post). The official 3.4.2 manager is
-  uapi 5 () and refuses to talk to it. Any future kernel bump that
+  (`v3.4.0-legacy-24-gb933b1f7 (33318-6)`), so it must always ship with a
+  **uapi-6 manager** — currently the dev CI build `33553`
+  (`KernelSU_Next_v3.4.2-198-g7ccf6147_33553-release.apk`, mirrored in
+  `kernelsu/` and linked from the release post). The official 3.4.2 manager is
+  uapi 5 (`33355-5`) and refuses to talk to it. Any future kernel bump that
   changes the driver uapi, or any manager upgrade past the driver, breaks root
-  silently: check the  line in the manager and update
+  silently: check the `Version: ... (NNNNN-U)` line in the manager and update
   the mirrored APK, release post and this note together.
 - kernel (`lineage-24.0`): enable `CONFIG_F2FS_FS_VERITY` and
   `CONFIG_EXT4_FS_VERITY`. `/data` is f2fs and only generic `FS_VERITY` was
