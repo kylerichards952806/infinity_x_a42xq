@@ -61,6 +61,7 @@ Project Infinity-X is an AOSP based Custom ROM runs on Android Operating System.
 - fs-verity on f2fs is fixed in the next kernel build. Current builds log harmless `Failed to verity-protect ...` lines.
 - Do **not** wipe `/metadata`: the factory key cannot be regenerated and the device will not boot without the patched fstab.
 - Banking apps may still apply their own root or bootloader checks.
+- KernelSU-Next is built into the kernel; if an app refuses to run because of root, hide it with your usual modules or flash a non-root boot image.
 - Unofficial build: no OTA updates, no official maintainer support, don't ask for ETAs.
 - Anything else: report it with a logcat and, for boot issues, `last_kmsg`/`dmesg`.
 
