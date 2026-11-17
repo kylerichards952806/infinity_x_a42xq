@@ -227,6 +227,18 @@ Notes:
 - No SUSFS
 - fs-verity (`CONFIG_F2FS_FS_VERITY`, `CONFIG_EXT4_FS_VERITY`) enabled in the next kernel build
 
+### SELinux — what enforcing actually took
+
+There is no usable Samsung vendor policy for AOSP on this platform, so enforcing was never a one-line flag. The device policy in `sm7225-common` is written and maintained here: **71 `.te` files, 368 `allow` rules, 39 `dontaudit` rules, 108 `file_contexts` and 104 `genfs_contexts` entries**, roughly 960 lines of policy and labels that this port carries itself.
+
+- Every Samsung blob got a domain and a label instead of running as `unlabeled`: radio (`rild`, `sehradiomanager`, `secril_config_svc`, plus the `imsd`/`imsd2` channels), UDFPS/fingerprint, `tee`, keymaster/gatekeeper, NFC, camera, audio, display and composer, sensors, power, thermal, WiFi hostapd/supplicant, Bluetooth, DRM/Widevine, health, fastcharge, LiveDisplay, vold, init and macloader.
+- The rules were built deny by deny: boot with enforcing on, read the AVCs, find the exact domain and object, add the narrowest allow that lets the blob do its job, boot again. Nothing is left `permissive` and there is no catch-all allow hiding the log.
+- `user` builds are stricter than `userdebug`, and that broke things late: `crash_dump` could not ptrace `vold`, `system_server` could not read `binderfs_logs_transactions`, and SystemUI's `ro.usb.uvc.enabled` read needed silencing rather than opening the property up.
+- Vendor properties, service and hwservice contexts needed fixing as well, otherwise init and HAL registration hit `property_service` and `hwservicemanager` denials before the launcher ever appears.
+- Still being cleaned in the next build: `rild` on `vendor_diag_device` and the NFC HAL on `default_prop` get explicit, narrow allows for the two remaining repeat denials.
+
+The result is SELinux enforcing from first boot with no permissive domains, and every denial left in the log has been triaged as vendor noise or fixed.
+
 ### Sources
 
 - ROM: https://github.com/ProjectInfinity-X/manifest (branch `17`)
@@ -242,3 +254,4 @@ Notes:
 - KernelSU-Next
 - BiTGApps
 - Everyone who tested the Lineage builds and reported back
+- tarkzim (or whoever else maintains LineageOS builds for the A42) — pull whatever you need from the device, common, kernel and vendor trees above, you're welcome to it.
