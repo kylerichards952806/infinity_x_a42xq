@@ -61,7 +61,7 @@ Everything needed as a daily driver:
 ## Known issues
 
 - Unofficial build: no OTA updates, no official maintainer support.
-- Play Integrity: BASIC and DEVICE may pass depending on Infinity-X's current fixes; STRONG will not pass while the bootloader is unlocked. Banking apps can still detect an unlocked bootloader or root.
+- Play Integrity: this build reaches **STRONG** integrity with Infinity-X's built-in spoofing stack, even with the bootloader unlocked and KernelSU-Next installed. Individual banking apps may still apply their own root/bootloader checks.
 - KernelSU-Next is built into the kernel. If an app refuses to run because of root, that is expected; hide it with your usual modules or use a non-root boot image. SUSFS is **not** included; install the CI manager build described below.
 - Anything else: report it with a logcat and, for boot issues, `last_kmsg`/`dmesg`.
 
@@ -212,7 +212,7 @@ Once you are on an Infinity-X build signed with these keys, later builds can be 
 
 ### Play Integrity
 
-This is a `user` build signed with release keys and keeps the stock A426B fingerprint, which is what BASIC integrity needs. DEVICE integrity depends on Infinity-X's current spoofing/fixes; STRONG integrity will not pass while the bootloader is unlocked. KernelSU-Next is present, so root-sensitive apps may still object.
+This is a `user` build signed with release keys and keeps the stock A426B fingerprint. With Infinity-X's built-in spoofing stack the device passes **STRONG** integrity even with the bootloader unlocked and KernelSU-Next installed. Root-sensitive apps may still use their own detection.
 
 ---
 

@@ -23,7 +23,7 @@ Builds are only started when explicitly requested.
 - Log sweep: 49 SELinux denials since boot, all vendor/kernel policy gaps
   (qipcrtr from kworkers, rild on vendor_diag_device, nfc on default_prop,
   Proton Pass on /proc/version) — no system_server or app denials. RILD
-  `nlmsg_type=16`, WifiHAL QCA stats, keystore2 GC `UNIMPLEMENTED`,
+  `nlmsg_type=16`, WifiHAL QCA stats, keystore2 GC `UNIMPLEMENTED` (expected with the spoofing stack; STRONG integrity still passes),
   `msm_vidc` debugfs and `pet_watchdog` lines are noise. zram 2 GB active,
   OOM reaper working as intended under 4 GB pressure.
 - `device/samsung/a42xq`: Google SetupWizard skipped
