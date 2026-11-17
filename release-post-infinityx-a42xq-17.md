@@ -62,7 +62,7 @@ Everything needed as a daily driver:
 
 - Unofficial build: no OTA updates, no official maintainer support.
 - Play Integrity: BASIC and DEVICE may pass depending on Infinity-X's current fixes; STRONG will not pass while the bootloader is unlocked. Banking apps can still detect an unlocked bootloader or root.
-- KernelSU-Next is built into the kernel. If an app refuses to run because of root, that is expected; hide it with your usual modules or use a non-root boot image. SUSFS is **not** included.
+- KernelSU-Next is built into the kernel. If an app refuses to run because of root, that is expected; hide it with your usual modules or use a non-root boot image. SUSFS is **not** included; install the CI manager build described below.
 - Anything else: report it with a logcat and, for boot issues, `last_kmsg`/`dmesg`.
 
 ---
@@ -219,6 +219,25 @@ This is a `user` build signed with release keys and keeps the stock A426B finger
 ## Downloads
 
 Both variants are built from the same device trees; only the `WITH_GAPPS` flag differs.
+
+## Root manager (KernelSU-Next)
+
+The kernel ships KernelSU-Next with driver **uapi 6**
+(`v3.4.0-legacy-24-gb933b1f7 (33318-6)`). The official KernelSU-Next **3.4.2**
+manager is uapi 5 (`33355-5`) and refuses to work with it, reporting that the
+manager is too low and must be version 6 or higher. No official uapi-6 manager
+has been released yet, so install the CI build from the `dev` branch:
+
+- **APK**: `KernelSU_Next_v3.4.2-198-g7ccf6147_33553-release.apk` (versionCode `33553`, manager uapi 6)
+- **Download**: https://github.com/kylerichards952806/infinity_x_a42xq/raw/main/kernelsu/KernelSU_Next_v3.4.2-198-g7ccf6147_33553-release.apk
+- **SHA-256**: `3860d41c86ff30dd31af815f30032de03ffd71e775a44311ef319db539a927d7`
+
+Notes:
+
+- Do not update it to the 3.4.2 release; that is the uapi-5 manager and root breaks again.
+- If a differently signed manager is already installed, uninstall it first — root grants are tied to the signature and need re-granting.
+- This kernel has no SUSFS, so `SUSFS operation not supported` in the logs is expected.
+- Provenance: KernelSU-Next CI run `43601257081` (`build-manager-ci.yml`, `dev` branch); mirrored because Actions artifacts expire.
 
 <!-- DOWNLOADS_START -->
 - **GAPPS** (`WITH_GAPPS := true`): `Project_Infinity-X-4.2-a42xq-16.11.2026-GAPPS-UNOFFICIAL.zip` — 2,519,545,845 bytes (2.35 GiB) — MD5: `61401778d4e84b76e98778c6fbcfd695`
