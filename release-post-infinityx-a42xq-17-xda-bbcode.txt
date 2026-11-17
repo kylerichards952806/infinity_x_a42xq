@@ -1,0 +1,323 @@
+[SIZE=6][B]Project Infinity-X 4.2 (Android 17) for the Samsung Galaxy A42 5G[/B][/SIZE]
+
+
+Project Infinity-X is an AOSP based Custom ROM runs on Android Operating System. We give our best to fulfill the demands of our users regarding features, Stability & performance.
+
+[CODE]/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards,
+ * thermonuclear war, or you getting fired because the alarm app failed. Please
+ * do some research if you have any concerns about features included in this ROM
+ * before flashing it! YOU are choosing to make these modifications, and if
+ * you point the finger at me for messing up your device, I will laugh at you.
+ */[/CODE]
+
+[B]Device:[/B] Samsung Galaxy A42 5G (SM-A426B / a42xq)
+[B]Android:[/B] 17 · [B]ROM:[/B] Project Infinity-X 4.2 · [B]Status:[/B] UNOFFICIAL
+[B]Build:[/B] user, signed with private release keys, stock A426B fingerprint
+[B]Kernel:[/B] 4.19.325-kyler084-a42tweak-v1.0.2 (KernelSU-Next, no SUSFS)
+[B]Maintainer:[/B] kyler084
+
+
+[SIZE=5][B]What's working[/B][/SIZE]
+
+
+[LIST]
+[*]Boot, calls, SMS/MMS, mobile data
+[*]VoLTE / VoWiFi (IMS), including the Samsung IMS/RIL stack
+[*]WiFi, Bluetooth, NFC, GPS, hotspot, USB/OTG
+[*]Camera (photo/video), audio, in-call audio
+[*]Under-display fingerprint (UDFPS), face unlock
+[*]LiveDisplay, brightness and high-brightness mode
+[*]SELinux fully enforcing from boot
+[*]GAPPS build: Play Store and Play services, Play Integrity [B]STRONG[/B] with Infinity-X's built-in spoofing
+[*]KernelSU-Next root
+[/LIST]
+
+
+[SIZE=5][B]Features[/B][/SIZE]
+
+
+[LIST]
+[*]Infinity Suite: network traffic monitor, status bar logo, WiFi standard icon
+[*]Font, icon shape, signal, WiFi and data icon customization
+[*]Lockscreen clock styles, depth wallpaper, ambient pulse, edge lighting, music ticker, AOD image
+[*]20+ battery styles with battery customizer, status bar clock chip
+[*]QS panel transparency, dual tone, tile size/row spacing, compact media player
+[*]Dynamic Island style notification chip with adjustable position
+[*]Screen-off UDFPS icons and animations
+[*]Face Unlock, Pocket Mode, Smart Pixels
+[*]Three-finger swipe to screenshot, quick torch, double-tap to pulse
+[*]Separate SIM ringtones, increasing ring volume, volume panel on the left
+[*]Charging control, Device as Webcam, battery information
+[*]Hide navigation bar, force fullscreen apps, hide developer options status
+[*]Advanced reboot, ignore window secure level flags
+[*]Custom Monet engine, wallpaper blur, colored notification/QS icons
+[*]Pixel extras: Now Playing, Clear Calling, Quick Tap, Adaptive Charging
+[*]Customizable Launcher3, clear-all notification button
+[*]AudioFX equalizer
+[*]Bunch more customization under Settings → Infinity Suite
+[/LIST]
+
+
+[SIZE=5][B]Bugs / notes[/B][/SIZE]
+
+
+[LIST]
+[*]Google SetupWizard is [B]temporarily disabled[/B] while its page lock/unlock bug is fixed. First boot goes straight to the launcher; sign in through Play Store.
+[*][B]Dolby Atmos removed[/B] from this and all future builds. The A42 5G blob set has no Dolby effect library and no profiles, so the switch did nothing. AudioFX is included instead.
+[*]Play services ships as a priv-app APK fallback because the GMS APEX does not activate on this device.
+[*]fs-verity on f2fs is fixed in the next kernel build. Current builds log harmless [ICODE]Failed to verity-protect ...[/ICODE] lines.
+[*]Do [B]not[/B] wipe [ICODE]/metadata[/ICODE]: the factory key cannot be regenerated and the device will not boot without the patched fstab.
+[*]Banking apps may still apply their own root or bootloader checks.
+[*]KernelSU-Next is built into the kernel; if an app refuses to run because of root, hide it with your usual modules or use a boot image built without KernelSU-Next. No non-root boot image is shipped here.
+[*]Unofficial build: there is no update server, so no OTA updates, and no official maintainer support. Don't ask for ETAs.
+[*]Anything else: report it with a logcat and, for boot issues, [ICODE]last_kmsg[/ICODE]/[ICODE]dmesg[/ICODE].
+[/LIST]
+
+This is an unofficial build, expect some imperfections. If you have any issues/bugs, please provide logcat or last_kmsg/etc.
+
+
+[SIZE=5][B]Installation[/B][/SIZE]
+
+
+Flash with TWRP or with the Lineage recovery inside the zip ([ICODE]recovery.img[/ICODE]). Both work.
+
+1. Boot into recovery
+2. Format Data, but only if you are coming from a build signed with different keys
+3. Flash the ROM zip
+4. If you want Google apps, flash them now, in the same session, before the first boot
+5. Reboot to system
+
+Once you are on an Infinity-X build signed with these keys, later builds can be dirty flashed without wiping, from either recovery.
+
+
+[SIZE=4][B]Google apps on VANILLA[/B][/SIZE]
+
+
+The ROM ships without Google apps unless you pick the GAPPS variant. For vanilla builds use [B]BiTGApps Nano for Android 17 arm64[/B]: [URL]https://bitgapps.io[/URL] — Nano → ARM64 → Android 17.0. Flash it straight after the ROM and before the phone boots for the first time. Don't use a package built for another Android version, and a clean flash is required if you add GApps after the first boot.
+
+Do not use BiTGApps' debloat option: it strips stock apps like Messaging, and SMS/MMS stop working until you put an APK back by hand.
+
+
+[SIZE=5][B]Downloads[/B][/SIZE]
+
+
+Both variants are built from the same device trees; only the [ICODE]WITH_GAPPS[/ICODE] flag differs.
+
+<!-- DOWNLOADS_START -->
+[LIST]
+[*][B]GAPPS[/B] ([ICODE]WITH_GAPPS := true[/ICODE]): [ICODE]infinity_a42xq-GAPPS-repacked.zip[/ICODE] — 2,516,507,938 bytes (2.34 GiB) — MD5: [ICODE]6c2366166916da1594ccb209ad0c1a95[/ICODE]
+[*]– Repacked after the first flash attempts: [ICODE]system[/ICODE] and [ICODE]product[/ICODE] are resized (5.47 GB and 2.20 GB partitions) so the four images total 8.86 GB and fit the 9.02 GB super.
+[*]– As built (before repack): [ICODE]Project_Infinity-X-4.2-a42xq-16.11.2026-GAPPS-UNOFFICIAL.zip[/ICODE] — 2,519,545,845 bytes (2.35 GiB) — MD5: [ICODE]61401778d4e84b76e98778c6fbcfd695[/ICODE]
+[*][B]VANILLA[/B] ([ICODE]WITH_GAPPS := false[/ICODE]): not rebuilt yet. The earlier VANILLA zip predates the boot and wattage fixes, so don't flash it; a fresh VANILLA build follows.
+[/LIST]
+<!-- DOWNLOADS_END -->
+
+The zip contains [ICODE]recovery.img[/ICODE], the Lineage recovery for this device, for anyone who would rather use it than TWRP.
+
+
+[SIZE=5][B]Root manager (KernelSU-Next)[/B][/SIZE]
+
+
+The kernel ships KernelSU-Next with driver [B]uapi 6[/B] ([ICODE]v3.4.0-legacy-24-gb933b1f7 (33318-6)[/ICODE]). The official KernelSU-Next [B]3.4.2[/B] manager is uapi 5 ([ICODE]33355-5[/ICODE]) and refuses to work with it, reporting that the manager is too low and must be version 6 or higher. No official uapi-6 manager has been released yet, so install the CI build from the [ICODE]dev[/ICODE] branch:
+
+[LIST]
+[*][B]APK[/B]: [ICODE]KernelSU_Next_v3.4.2-198-g7ccf6147_33553-release.apk[/ICODE] (versionCode [ICODE]33553[/ICODE], manager uapi 6)
+[*][B]Download[/B]: [URL]https://github.com/kylerichards952806/infinity_x_a42xq/raw/main/kernelsu/KernelSU_Next_v3.4.2-198-g7ccf6147_33553-release.apk[/URL]
+[*][B]SHA-256[/B]: [ICODE]3860d41c86ff30dd31af815f30032de03ffd71e775a44311ef319db539a927d7[/ICODE]
+[/LIST]
+
+Notes:
+
+[LIST]
+[*]Do not update it to the 3.4.2 release; that is the uapi-5 manager and root breaks again.
+[*]If a differently signed manager is already installed, uninstall it first — root grants are tied to the signature and need re-granting.
+[*]This kernel has no SUSFS, so [ICODE]SUSFS operation not supported[/ICODE] in the logs is expected.
+[*]Provenance: KernelSU-Next CI run [ICODE]43601257081[/ICODE] ([ICODE]build-manager-ci.yml[/ICODE], [ICODE]dev[/ICODE] branch); mirrored because Actions artifacts expire.
+[/LIST]
+
+
+[SIZE=5][B]Changelog[/B][/SIZE]
+
+
+
+[SIZE=4][B]This build — 16 November 2026[/B][/SIZE]
+
+
+[LIST]
+[*]Fixed the boot hang: Google ExtServices ships as a priv-app, so [ICODE]system_server[/ICODE] no longer aborts with "Required services extension package is missing"
+[*]Fixed the "Phone is starting" hang: the device manifest declared a [ICODE]vendor.lineage.livedisplay[/ICODE] AIDL HAL that no service registers, so [ICODE]ServiceManager.waitForDeclaredService()[/ICODE] blocked the [ICODE]android.display[/ICODE] thread inside [ICODE]finishBooting()[/ICODE]; user 0 never unlocked and the Watchdog restarted [ICODE]system_server[/ICODE] every ~66 seconds
+[*]Added Launcher3QuickStep; the product had no HOME activity
+[*]Play Store fixed: Play services ships as a priv-app APK because the GMS APEX never activates
+[*]Google SetupWizard temporarily disabled (page lock/unlock bug, and it left airplane mode on after an offline first boot)
+[*]Dolby Atmos app removed; AudioFX enabled
+[*]Fixed the lockscreen/AOD charging readout showing 0.0 W: Samsung reports [ICODE]battery/current_now[/ICODE] in mA and [ICODE]healthd[/ICODE] stored it as microamps; the HAL now normalises and falls back to [ICODE]bms/current_now[/ICODE]
+[*]SELinux: [ICODE]crash_dump[/ICODE] can ptrace [ICODE]vold[/ICODE], [ICODE]system_server[/ICODE] can read [ICODE]binderfs_logs_transactions[/ICODE] on [ICODE]user[/ICODE] builds, benign [ICODE]ro.usb.uvc.enabled[/ICODE] read silenced
+[*]OTA packaging no longer hangs: [ICODE]releasetools/non_ab_ota.py[/ICODE] now passes [ICODE]-y[/ICODE] to [ICODE]zip[/ICODE] so it doesn't follow [ICODE]ROOT/d[/ICODE] into host sysfs
+[*]Kernel: [ICODE]CONFIG_F2FS_FS_VERITY[/ICODE] and [ICODE]CONFIG_EXT4_FS_VERITY[/ICODE] enabled (next kernel build)
+[*]Log sweep: SELinux, RIL, WiFi and keystore noise reviewed; no system_server or app denials
+[/LIST]
+
+
+[SIZE=4][B]Build history[/B][/SIZE]
+
+
+[LIST]
+[*][B]Build[/B] (Date) — ROM — Device / kernel changes
+[*][B]Initial[/B] (12 Nov 2026) — Infinity-X 4.2 — first booting Infinity-X build
+[*][B]4.2[/B] (16 Nov 2026) — Infinity-X 4.2 — boot/LiveDisplay fix, Launcher3QuickStep, Dolby Atmos, AudioFX, user-build SELinux fixes, ZIPOPT OTA fix
+[*][B]GAPPS 4.2[/B] (16 Nov 2026) — Infinity-X 4.2 — healthd charging-wattage fix, [ICODE]releasetools[/ICODE] [ICODE]-y[/ICODE] OTA fix, GMS LFS blobs pulled; GAPPS variant only
+[/LIST]
+
+
+[SIZE=4][B]Base ROM[/B][/SIZE]
+
+
+[LIST]
+[*]Project Infinity-X 4.2, Android 17, November 2026 security patch
+[*]Built from [ICODE]ProjectInfinity-X/manifest[/ICODE] branch [ICODE]17[/ICODE], [ICODE]user[/ICODE] release, private release keys
+[*]Stock A426B fingerprint kept for Play certification
+[*]Two variants: [ICODE]WITH_GAPPS := true[/ICODE] (GAPPS) and [ICODE]WITH_GAPPS := false[/ICODE] (VANILLA)
+[/LIST]
+
+
+[SIZE=4][B]Upstream — Infinity-X 4.2[/B][/SIZE]
+
+
+[LIST]
+[*]Merged November 2026 security patch
+[*]Fixed the stock app icon briefly appearing during the app-to-home-screen transition when a custom icon pack is in use
+[*]Brought back the combined Internet tile from Android 16
+[*]Dynamic Island chip horizontal/vertical position is now adjustable for different punch-hole layouts
+[*]Added Dynamic Island support on devices with corner punch-hole layouts
+[*]Fixed QS panel lag when Dynamic Island is active and media is playing
+[*]Added an optional aggressive standby sleep mode toggle to minimise idle drain
+[*]Transparent blur effects for the revamped volume panel and more system/dynamic bar surfaces
+[*]More optimised and cleaner glass blur UI
+[*]Fixed transparent status bar overlap while scrolling the Settings homepage
+[*]Private DNS can now be disabled while a VPN is active (author: idoybh)
+[*]Fixed the Private DNS tile long-press opening nothing (author: idoybh)
+[*]Added per-connection Wi-Fi MAC address randomisation (author: muhomorr)
+[*]Fixed an occasional crash on the Settings Wi-Fi data usage page
+[*]The call timer is no longer shown in the Dynamic Island chip until the call connects
+[*]Improved custom ROM/root detection handling in banking and security apps
+[*]Revamped the Spoofing section in Material Expressive; added keystore provider, ROM signature, Vending SDK level and more (authors: joeyhuab, neobuddy89)
+[*]Improved Trickystore and the spoofing feature backend
+[*]Added a toggle to disable forced dark theme in Battery Saver (author: Blackseafisher1)
+[*]Fixed the volume panel not showing in legacy keyguard mode (author: neobuddy89)
+[*]Fixed AliPay crashing
+[*]Fixed Tidal crashing (author: QuinceROMS)
+[*]In-use apps can no longer be cleared by the Recents panel's Clear All button
+[*]Fixed the inability to set SIM 1 ringtone on some devices
+[*]Revamped Header Image settings in Material 3 Expressive and improved Header Image functionality (author: neobuddy89)
+[*]Fixed the status bar being hidden while lockscreen media art is showing
+[*]Fixed an async notification inflation warning that caused UI lag in some instances
+[*]Added wallpaper effects and live/Pixel wallpapers support in vanilla builds (author: uwu-gl)
+[*]Fixed the keybox fetch failed error and greatly improved keybox fetching speed
+[*]Added a toggle to disable custom ambient/AOD brightness so the auto-brightness sensor can drive ambient/doze brightness
+[*]No longer forces an opaque app drawer background when window-level blurs are disabled in legacy fullscreen / One UI app drawer style
+[*]Fixed the predictive back gesture animation in InfinitySuite
+[*]Fixed the sandbox crash when the app list contains no user apps (author: Varakumar)
+[*]Weather clock / At a Glance is hidden while notifications are present
+[*]Wallpaper & Styles now shows the lockscreen clock with the applied clock fonts (author: eldainosor)
+[*]Expanded volume panel now opens the media output switcher instead of the extended stock volume panel
+[*]Variable fonts applied to the lyrics card and lockscreen lyrics
+[/LIST]
+
+
+[SIZE=4][B]Device tree (carried over from my fixed LineageOS 24)[/B][/SIZE]
+
+
+[LIST]
+[*]SELinux fully enforcing from boot, with the bring-up denials cleaned up
+[*]LiveDisplay: fixed hang at boot and black screen after wiping data
+[*]UDFPS: fixed fingerprint prompt text being cut off by the navigation bar
+[*]Fixed lockscreen PIN being rejected after a reboot
+[*]Fixed brightness and high-brightness mode not always applying
+[*]Fixed power hints not being applied (scroll and app-launch stutter)
+[*]Added the missing thermal HAL
+[*]Fixed charger and OTG detection
+[*]Fixed invalid vibration profile warning
+[*]In-call audio fixed (updated mixer paths)
+[*]Added the default Messaging app so SMS/MMS work out of the box
+[*]Faster memory compression (LZ4 zram) on 4 GB models
+[*]Updated to A426BXXU8DXG2 blobs and build fingerprint
+[*]UDFPS overlay/pixel-pitch updates, [ICODE]soong_config_set()[/ICODE] migration
+[*]About Phone reports [B]kyler084[/B] as maintainer and the correct specs: Galaxy A42 5G, Snapdragon 750G, 720 x 1600 at 60 Hz, 5000 mAh, 48MP + 8MP + 5MP + 5MP
+[*]Private signing keys instead of public test keys
+[/LIST]
+
+
+[SIZE=4][B]IMS / VoLTE[/B][/SIZE]
+
+
+[LIST]
+[*]Inherits [ICODE]hardware/lineage/generic-ims/ims.mk[/ICODE] (ImsStack, CarrierSettings, Iwlan, QualifiedNetworksService, ImsMedia)
+[*]Samsung radio HALs kept: [ICODE]vendor.samsung.hardware.radio@2.0/2.1/2.2[/ICODE], [ICODE]sehradiomanager[/ICODE], [ICODE]secril_config_svc[/ICODE]
+[*]IMS QoS precondition disabled via [ICODE]CarrierSettingsOverlayCommon[/ICODE]
+[*][ICODE]persist.dbg.volte_avail_ovr[/ICODE], [ICODE]vt_avail_ovr[/ICODE], [ICODE]wfc_avail_ovr[/ICODE] kept
+[*]Samsung radio channel [ICODE]imsd[/ICODE]/[ICODE]imsd2[/ICODE] SELinux labels kept
+[*]Google Carrier Services ([ICODE]com.google.android.ims[/ICODE]) available via GApps
+[/LIST]
+
+
+[SIZE=4][B]Kernel — 4.19.325-kyler084-a42tweak-v1.0.2[/B][/SIZE]
+
+
+[LIST]
+[*]Default CPU governor changed from [ICODE]performance[/ICODE] to [ICODE]schedutil[/ICODE]
+[*][ICODE]CONFIG_IKHEADERS[/ICODE] off (no resident compressed headers)
+[*][ICODE]CONFIG_SLUB_DEBUG[/ICODE] off (no slab debug accounting on every allocation)
+[*][ICODE]CONFIG_PROFILING[/ICODE], [ICODE]CONFIG_CPU_FREQ_TIMES[/ICODE], [ICODE]CONFIG_ARM_QCOM_CPUFREQ_HW_DEBUG[/ICODE] off
+[*]4 GB tuning (LZ4 zram and reduced kernel-side overhead)
+[*]SELinux bootparam enforcing support ([ICODE]CONFIG_SECURITY_SELINUX_BOOTPARAM[/ICODE], value 1)
+[*]KernelSU-Next with the syscall-table hook ([ICODE]execve[/ICODE], [ICODE]execveat[/ICODE], [ICODE]faccessat[/ICODE], [ICODE]newfstatat[/ICODE])
+[*][ICODE]reboot(2)[/ICODE] hook so [ICODE]ksud[/ICODE] can install its driver fd and modules install correctly
+[*]Kprobes stays off on this 4.19 kernel; the syscall-table hook is the supported path
+[*]KSU init [ICODE].rc[/ICODE] read fixes so [ICODE]post-fs-data[/ICODE] is actually executed
+[*]No SUSFS
+[*]fs-verity ([ICODE]CONFIG_F2FS_FS_VERITY[/ICODE], [ICODE]CONFIG_EXT4_FS_VERITY[/ICODE]) enabled in the next kernel build
+[/LIST]
+
+
+[SIZE=5][B]SELinux — what enforcing actually took[/B][/SIZE]
+
+
+There is no usable Samsung vendor policy for AOSP on this platform, so enforcing was never a one-line flag. The device policy in [ICODE]sm7225-common[/ICODE] is written and maintained here: [B]71 [ICODE].te[/ICODE] files, 368 [ICODE]allow[/ICODE] rules, 39 [ICODE]dontaudit[/ICODE] rules, 108 [ICODE]file_contexts[/ICODE] and 104 [ICODE]genfs_contexts[/ICODE] entries[/B], roughly 960 lines of policy and labels that this port carries itself.
+
+[LIST]
+[*]Every Samsung blob got a domain and a label instead of running as [ICODE]unlabeled[/ICODE]: radio ([ICODE]rild[/ICODE], [ICODE]sehradiomanager[/ICODE], [ICODE]secril_config_svc[/ICODE], plus the [ICODE]imsd[/ICODE]/[ICODE]imsd2[/ICODE] channels), UDFPS/fingerprint, [ICODE]tee[/ICODE], keymaster/gatekeeper, NFC, camera, audio, display and composer, sensors, power, thermal, WiFi hostapd/supplicant, Bluetooth, DRM/Widevine, health, fastcharge, LiveDisplay, vold, init and macloader.
+[*]The rules were built deny by deny: boot with enforcing on, read the AVCs, find the exact domain and object, add the narrowest allow that lets the blob do its job, boot again. Nothing is left [ICODE]permissive[/ICODE] and there is no catch-all allow hiding the log.
+[*][ICODE]user[/ICODE] builds are stricter than [ICODE]userdebug[/ICODE], and that broke things late: [ICODE]crash_dump[/ICODE] could not ptrace [ICODE]vold[/ICODE], [ICODE]system_server[/ICODE] could not read [ICODE]binderfs_logs_transactions[/ICODE], and SystemUI's [ICODE]ro.usb.uvc.enabled[/ICODE] read needed silencing rather than opening the property up.
+[*]Vendor properties, service and hwservice contexts needed fixing as well, otherwise init and HAL registration hit [ICODE]property_service[/ICODE] and [ICODE]hwservicemanager[/ICODE] denials before the launcher ever appears.
+[*]Still being cleaned in the next build: [ICODE]rild[/ICODE] on [ICODE]vendor_diag_device[/ICODE] and the NFC HAL on [ICODE]default_prop[/ICODE] get explicit, narrow allows for the two remaining repeat denials.
+[/LIST]
+
+The result is SELinux enforcing from first boot with no permissive domains, and every denial left in the log has been triaged as vendor noise or fixed.
+
+
+[SIZE=5][B]Sources[/B][/SIZE]
+
+
+[LIST]
+[*]ROM: [URL]https://github.com/ProjectInfinity-X/manifest[/URL] (branch [ICODE]17[/ICODE])
+[*]Device: [URL]https://github.com/kylerichards952806/android_device_samsung_a42xq[/URL]
+[*]Common: [URL]https://github.com/kylerichards952806/android_device_samsung_sm7225-common[/URL]
+[*]Kernel: [URL]https://github.com/kylerichards952806/android_kernel_samsung_sm7225[/URL]
+[*]Vendor: [URL]https://github.com/kylerichards952806/android_vendor_samsung_sm7225-common[/URL]
+[/LIST]
+
+
+[SIZE=5][B]Credits[/B][/SIZE]
+
+
+[LIST]
+[*]The Project Infinity-X team
+[*]The LineageOS team and everyone who keeps the sm7225 platform alive
+[*]KernelSU-Next
+[*]BiTGApps
+[*]Everyone who tested the Lineage builds and reported back
+[*]tarkzim (or whoever else maintains LineageOS builds for the A42) — pull whatever you need from the device, common, kernel and vendor trees above, you're welcome to it.
+[/LIST]
