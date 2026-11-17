@@ -54,6 +54,11 @@ def convert(md):
             out.append("[HR][/HR]")
             i += 1
             continue
+        # HTML comments are build-script markers in the markdown; XDA would
+        # show them as literal text.
+        if re.match(r"^\s*<!--.*-->\s*$", line):
+            i += 1
+            continue
         if line.startswith("```"):
             i += 1
             block = []

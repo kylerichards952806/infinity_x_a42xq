@@ -106,14 +106,12 @@ Do not use BiTGApps' debloat option: it strips stock apps like Messaging, and SM
 
 Both variants are built from the same device trees; only the [ICODE]WITH_GAPPS[/ICODE] flag differs.
 
-<!-- DOWNLOADS_START -->
 [LIST]
 [*][B]GAPPS[/B] ([ICODE]WITH_GAPPS := true[/ICODE]): [ICODE]infinity_a42xq-GAPPS-repacked.zip[/ICODE] — 2,516,507,938 bytes (2.34 GiB) — MD5: [ICODE]6c2366166916da1594ccb209ad0c1a95[/ICODE]
 [*]– Repacked after the first flash attempts: [ICODE]system[/ICODE] and [ICODE]product[/ICODE] are resized (5.47 GB and 2.20 GB partitions) so the four images total 8.86 GB and fit the 9.02 GB super.
 [*]– As built (before repack): [ICODE]Project_Infinity-X-4.2-a42xq-16.11.2026-GAPPS-UNOFFICIAL.zip[/ICODE] — 2,519,545,845 bytes (2.35 GiB) — MD5: [ICODE]61401778d4e84b76e98778c6fbcfd695[/ICODE]
 [*][B]VANILLA[/B] ([ICODE]WITH_GAPPS := false[/ICODE]): not rebuilt yet. The earlier VANILLA zip predates the boot and wattage fixes, so don't flash it; a fresh VANILLA build follows.
 [/LIST]
-<!-- DOWNLOADS_END -->
 
 The zip contains [ICODE]recovery.img[/ICODE], the Lineage recovery for this device, for anyone who would rather use it than TWRP.
 
