@@ -255,3 +255,9 @@ The result is SELinux enforcing from first boot with no permissive domains, and 
 - BiTGApps
 - Everyone who tested the Lineage builds and reported back
 - tarkzim (or whoever else maintains LineageOS builds for the A42) — pull whatever you need from the device, common, kernel and vendor trees above, you're welcome to it.
+
+### Support
+
+- Bug reports with logs are really appreciated — a `logcat` plus `last_kmsg`/`dmesg` is what makes fixes possible.
+- Donations are really appreciated; they make this work possible. Donate link: coming soon.
+- Want another AOSP ROM on this device? Find me a build server I can use and I'll bring it over. :)
