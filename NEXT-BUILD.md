@@ -7,6 +7,13 @@ Builds are only started when explicitly requested.
 
 ## Pending
 
+- `device/samsung/a42xq`: the GMS APEX
+  (`com.google.android.gmssystem.prodvic.apex`) is no longer installed;
+  `PRODUCT_PACKAGES` and `PRODUCT_COPY_FILES` filter it out, and the vendor
+  list drops the entry. Play services comes from the PrebuiltGmsCore
+  priv-app fallback, so the APEX would only create a duplicate package if
+  apexd ever mounts it. (Vendor edit is committed locally only; the
+  gitlab.com/tejas101k vendor remote needs credentials to push.)
 - `device/samsung/a42xq`: Google Play services priv-app fallback
   (`prebuilts/gms/PrebuiltGmsCore.apk`, 26.11.36, Git LFS) plus its
   privapp allowlist and preinstalled-packages sysconfig. Fixes Play Store
