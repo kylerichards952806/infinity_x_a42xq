@@ -7,6 +7,16 @@ Builds are only started when explicitly requested.
 
 ## Pending
 
+- kernel (`lineage-24.0`): enable `CONFIG_F2FS_FS_VERITY` and
+  `CONFIG_EXT4_FS_VERITY`. `/data` is f2fs and only generic `FS_VERITY` was
+  on, so fs-verity ioctls returned ENOTSUP and Android 17 logged 1082
+  `ResilientAtomicFile` plus 240 `AccessPersistence` failures per boot.
+- Log sweep: 49 SELinux denials since boot, all vendor/kernel policy gaps
+  (qipcrtr from kworkers, rild on vendor_diag_device, nfc on default_prop,
+  Proton Pass on /proc/version) — no system_server or app denials. RILD
+  `nlmsg_type=16`, WifiHAL QCA stats, keystore2 GC `UNIMPLEMENTED`,
+  `msm_vidc` debugfs and `pet_watchdog` lines are noise. zram 2 GB active,
+  OOM reaper working as intended under 4 GB pressure.
 - `device/samsung/a42xq`: Google SetupWizard skipped
   (`ro.setupwizard.mode=DISABLED`) because it needed a screen lock/unlock per
   page and left airplane mode on after an offline first boot; `SamsungDAP`

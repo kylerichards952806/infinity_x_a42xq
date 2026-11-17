@@ -248,6 +248,7 @@ The zip contains `recovery.img`, the Lineage recovery for this device, for anyon
 
 ## Notes
 
+- fs-verity: `/data` is f2fs and the current kernel lacks `CONFIG_F2FS_FS_VERITY`, so the system logs `Failed to verity-protect ...` on every atomic settings write. Cosmetic only; fixed in the next kernel build.
 - This is an unofficial build; don't ask for ETAs.
 - If you are coming from a build signed with different keys, you must Format Data once or it will refuse to boot.
 - Kernel source, device trees and vendor blobs are the ones linked below; the ROM is built from the Project Infinity-X `17` branch.
