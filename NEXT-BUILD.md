@@ -7,6 +7,24 @@ Builds are only started when explicitly requested.
 
 ## Pending
 
+- `device/samsung/a42xq`: Google SetupWizard skipped
+  (`ro.setupwizard.mode=DISABLED`) because it needed a screen lock/unlock per
+  page and left airplane mode on after an offline first boot; `SamsungDAP`
+  dropped (no Dolby effect library or profiles in the blob set, AudioFX stays);
+  ExtServices APEX dropped, APK fallback is the supported path.
+- apexd never activates `com.android.extservices` (`/system/apex`) or
+  `com.google.android.gmssystem` (`/product/apex`): payloads are byte-identical
+  to the prebuilts, the `avbpubkey` files match the keys embedded in the
+  APEXes, `ro.apex.updatable=true`, `ro.boot.veritymode=enforcing`, and both
+  still report `isActive="false"`. apexd logs the failure before logd is up and
+  dmesg is flooded by KernelSU, so the exact rejection reason is not captured
+  yet. APK fallbacks cover both until this is solved.
+- GAPPS audit: Photos, CalendarGooglePrebuilt, PrebuiltGmail and Maps are in
+  `vendor/pixel/gms` but not in the image. Gmail/Maps/Play services come from
+  Play Store updates; Photos and Calendar are absent.
+- Current hand-patched device still has `ro.adb.secure=0`, `ro.debuggable=1`
+  and the init.rc adb trigger. Those are device-side only; a clean build does
+  not contain them, so do not distribute the current system as-is.
 - `device/samsung/a42xq`: the GMS APEX
   (`com.google.android.gmssystem.prodvic.apex`) is no longer installed;
   `PRODUCT_PACKAGES` and `PRODUCT_COPY_FILES` filter it out, and the vendor
