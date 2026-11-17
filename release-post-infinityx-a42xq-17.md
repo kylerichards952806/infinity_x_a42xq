@@ -56,13 +56,13 @@ Project Infinity-X is an AOSP based Custom ROM runs on Android Operating System.
 ### Bugs / notes
 
 - Google SetupWizard is **temporarily disabled** while its page lock/unlock bug is fixed. First boot goes straight to the launcher; sign in through Play Store.
-- **Dolby Atmos removed** in this and future builds. The A42 5G blob set has no Dolby effect library and no profiles, so the switch did nothing. AudioFX is included instead.
+- **Dolby Atmos removed** from this and all future builds. The A42 5G blob set has no Dolby effect library and no profiles, so the switch did nothing. AudioFX is included instead.
 - Play services ships as a priv-app APK fallback because the GMS APEX does not activate on this device.
 - fs-verity on f2fs is fixed in the next kernel build. Current builds log harmless `Failed to verity-protect ...` lines.
 - Do **not** wipe `/metadata`: the factory key cannot be regenerated and the device will not boot without the patched fstab.
 - Banking apps may still apply their own root or bootloader checks.
-- KernelSU-Next is built into the kernel; if an app refuses to run because of root, hide it with your usual modules or flash a non-root boot image.
-- Unofficial build: no OTA updates, no official maintainer support, don't ask for ETAs.
+- KernelSU-Next is built into the kernel; if an app refuses to run because of root, hide it with your usual modules or use a boot image built without KernelSU-Next. No non-root boot image is shipped here.
+- Unofficial build: there is no update server, so no OTA updates, and no official maintainer support. Don't ask for ETAs.
 - Anything else: report it with a logcat and, for boot issues, `last_kmsg`/`dmesg`.
 
 This is an unofficial build, expect some imperfections. If you have any issues/bugs, please provide logcat or last_kmsg/etc.
@@ -184,7 +184,7 @@ Notes:
 - Expanded volume panel now opens the media output switcher instead of the extended stock volume panel
 - Variable fonts applied to the lyrics card and lockscreen lyrics
 
-#### Device tree (carried over from LineageOS 24.0)
+#### Device tree (carried over from my fixed LineageOS 24)
 
 - SELinux fully enforcing from boot, with the bring-up denials cleaned up
 - LiveDisplay: fixed hang at boot and black screen after wiping data
